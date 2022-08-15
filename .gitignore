@@ -259,3 +259,4 @@ artifacts
 cache
 yarn.lock
 coverage.json
+package-lock.json
