@@ -54,7 +54,6 @@ contract GachaContract is
   event Operator(address operator, bool isOperator);
   event Box(address boxContract);
   event NewGachaEvent(uint256 eventId, string name, uint256 totalBoxes, bytes32 merkleRoot);
-  event UpdateMerkleRoot(uint256 eventId, bytes32 merkleRoot);
   event BuyBox(uint256 eventId, address buyer, uint256 boxId, bytes32 boxData);
 
   modifier onlyOperator() {
@@ -99,20 +98,6 @@ contract GachaContract is
     newGachaEvent.merkleRoot = merkleRoot;
 
     emit NewGachaEvent(id, name, totalBoxes, merkleRoot);
-  }
-
-  function updateMerkleRoot(uint256 eventId, bytes32 merkleRoot)
-    external
-    whenNotPaused
-    onlyOperator
-    gachaEventExist(eventId)
-  {
-    require(merkleRoot != 0x0, "Merkle root must not empty");
-
-    GachaEvent storage gachaEvent = _gachaEvents[eventId];
-    gachaEvent.merkleRoot = merkleRoot;
-
-    emit UpdateMerkleRoot(eventId, merkleRoot);
   }
 
   function buyBox(
