@@ -53,7 +53,7 @@ contract GachaContract is
   event Admin(address admin, bool isAdmin);
   event Operator(address operator, bool isOperator);
   event Box(address boxContract);
-  event NewGachaEvent(uint256 eventId, string name, uint256 totalBoxes);
+  event NewGachaEvent(uint256 eventId, string name, uint256 totalBoxes, bytes32 merkleRoot);
   event UpdateMerkleRoot(uint256 eventId, bytes32 merkleRoot);
   event BuyBox(uint256 eventId, address buyer, uint256 boxId, bytes32 boxData);
 
@@ -83,20 +83,22 @@ contract GachaContract is
     _unpause();
   }
 
-  function createGachaEvent(string memory name, uint256 totalBoxes)
+  function createGachaEvent(string memory name, uint256 totalBoxes, bytes32 merkleRoot)
     external
-    onlyAdmin
+    onlyOperator
   {
     require(bytes(name).length > 0, "Name must not be empty");
     require(totalBoxes > 0, "Total boxes must be than greater than zero");
+    require(merkleRoot > 0, "merkleRoot");
 
     gachaEventCount.increment();
     uint256 id = gachaEventCount.current();
     GachaEvent storage newGachaEvent = _gachaEvents[id];
     newGachaEvent.name = name;
     newGachaEvent.totalBoxes = totalBoxes;
+    newGachaEvent.merkleRoot = merkleRoot;
 
-    emit NewGachaEvent(id, name, totalBoxes);
+    emit NewGachaEvent(id, name, totalBoxes, merkleRoot);
   }
 
   function updateMerkleRoot(uint256 eventId, bytes32 merkleRoot)
